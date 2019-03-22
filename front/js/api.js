@@ -1,14 +1,19 @@
 (function() {
     console.warn('Debugging ::');
+
+    function getAPIURL() {
+	return `${window.location.hostname}:8081`
+    }
     
     function checkAPIStatus() {
 	const req = new XMLHttpRequest();
 	try {
-	    req.open('GET', 'http://localhost:8081/ping?ip=127.0.0.1', true);
+	    const url = `http://${getAPIURL()}/ping?ip=${window.location.hostname}`
+	    req.open('GET', url, true);
 	    req.onload = function (e) {
 		if (req.readyState === 4) {
 		    if (req.status === 200) {
-			console.log(req.responseText);
+			console.log('The api seems to be running')
 		    } else {
 			console.error(req.statusText);
 		    }
@@ -23,12 +28,10 @@
 	    console.error(e)
 	    console.log('API Error');
 	}
-	if (req.status === 200) {
-	    console.log('Debug:: API OK')
-	} else {
-	    console.log('Debug:: API Error')
-	}
     }
     checkAPIStatus()
     const interval = setInterval(checkAPIStatus, 10000);
+    const form = document.querySelector('form')
+    form.action = `http://${getAPIURL()}/auth`;
+    
 })();
