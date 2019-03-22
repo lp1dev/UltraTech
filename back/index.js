@@ -1,8 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const execSync = require('child_process').execSync;
 const sqlite = require('sqlite3')
+const shell = require('shelljs')
 const md5 = require('md5')
 
 //
@@ -16,6 +16,16 @@ The intern did it and I don't really trust him.<br/>
 Thanks!<br/><br/>
 <i>lp1</i></p>
 </html>`
+
+function exec(cmd, res) {
+    shell.exec(cmd, (code, stdout, stderr) => {
+	if (stderr) {
+	    res.send(stderr)
+	} else {
+	    res.send(stdout)
+	}
+    })
+}
 
 function initDB() {
     db = new sqlite.Database('utech.db.sqlite');
@@ -36,8 +46,8 @@ app.get('/ping', (req, res) => {
     if (ip) {
         const cmd = `ping -c 1 ${ip}`
         console.log('cmd is', cmd)
-        const output = execSync(cmd, { encoding: 'utf-8' });
-        res.send(output)
+//        const output = execSync(cmd, { encoding: 'utf-8' });
+	exec(cmd, res);
     } else {
         res.send('Invalid ip parameter specified')
     }
